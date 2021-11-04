@@ -41,8 +41,7 @@
 
 /* LOCAL FUNCTION DEFINITIONS */
 
-#if 0
-static void ConfigureDmaStream(DMA_Stream_TypeDef * dmaStream, uint16 * srcAddress0, uint16 * srcAddress1, volatile uint32_t * dstAddress, const uint16 dataLength)
+void ConfigureDmaStream(DMA_Stream_TypeDef * dmaStream, uint16 * srcAddress0, uint16 * srcAddress1, volatile uint32_t * dstAddress, const uint16 dataLength)
 {
     /* Configure the source, destination address and the data length */
 
@@ -67,7 +66,6 @@ static void ConfigureDmaStream(DMA_Stream_TypeDef * dmaStream, uint16 * srcAddre
                       DMA_SxCR_TCIE |       /* Enable transfer complete interrupt flag */
                       DMA_SxCR_TEIE;        /* Enable transfer error interrupt flag*/
 }
-#endif
 
 static void ConfigureTimer()
 {
@@ -116,27 +114,37 @@ volatile uint32_t CCRxValues1[24]= {
 		PWM_PULL_UP,    PWM_PULL_DOWN, 	PWM_PULL_UP, 	0u		//VM
 };
 
-volatile uint32_t CCRxValues2[CCRx_VALUES_COUNT]= {
-		   1,  21, 31, 1500,
-		   2,  22, 32, 2500,
-		   3,  23, 33, 3500,
-		   4,  24, 34, 4500,
-		   5,  25, 35, 5500,
-		   6,  26, 36, 6500,
-		   7,  27, 37, 7500,
-		   8,  28, 38, 8500,
-		   9,  29, 39, 9500,
-		   10, 30, 40, 10500,
-		   11, 31, 41, 11500,
-		   12, 32, 42, 12500,
-		   13, 33, 43, 13500,
-		   14, 34, 44, 14500,
-		   15, 35, 45, 15500,
-		   16, 36, 46, 16500,
-		   17, 37, 47, 17500,
-		   18, 38, 48, 18500,
-		   19, 39, 49, 19500,
-		   20, 30, 50, 20000      };
+
+volatile uint32_t CCRxValues2[24]= {
+		PWM_PULL_UP,    PWM_PULL_DOWN, 	PWM_PULL_UP, 	100u,	//VM
+		PWM_PULL_DOWN,  PWM_PULL_DOWN, 	PWM_PULL_UP, 	200,	//WP
+		PWM_PULL_DOWN, 	PWM_PULL_UP, 	PWM_PULL_UP, 	300,	//UM
+		PWM_PULL_DOWN,  PWM_PULL_UP, 	PWM_PULL_DOWN, 	400,	//VP
+		PWM_PULL_UP,  	PWM_PULL_UP,   	PWM_PULL_DOWN, 	500,	//WM
+		PWM_PULL_UP,  	PWM_PULL_DOWN, 	PWM_PULL_DOWN, 	0		//UP
+};
+
+//volatile uint32_t CCRxValues2[CCRx_VALUES_COUNT]= {
+//		   1,  21, 31, 1500,
+//		   2,  22, 32, 2500,
+//		   3,  23, 33, 3500,
+//		   4,  24, 34, 4500,
+//		   5,  25, 35, 5500,
+//		   6,  26, 36, 6500,
+//		   7,  27, 37, 7500,
+//		   8,  28, 38, 8500,
+//		   9,  29, 39, 9500,
+//		   10, 30, 40, 10500,
+//		   11, 31, 41, 11500,
+//		   12, 32, 42, 12500,
+//		   13, 33, 43, 13500,
+//		   14, 34, 44, 14500,
+//		   15, 35, 45, 15500,
+//		   16, 36, 46, 16500,
+//		   17, 37, 47, 17500,
+//		   18, 38, 48, 18500,
+//		   19, 39, 49, 19500,
+//		   20, 30, 50, 20000      };
 
 void PWMDriver_ruInit(void)
 {

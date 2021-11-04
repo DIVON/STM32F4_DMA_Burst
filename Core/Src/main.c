@@ -63,28 +63,6 @@ void PWMDriver_ruInit(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#define CCRx_VALUES_COUNT 80u
-volatile uint32_t CCRxValues[CCRx_VALUES_COUNT]= {
-		   1,  21, 31, 1000,
-		   2,  22, 32, 2000,
-		   3,  23, 33, 3000,
-		   4,  24, 34, 4000,
-		   5,  25, 35, 5000,
-		   6,  26, 36, 6000,
-		   7,  27, 37, 7000,
-		   8,  28, 38, 8000,
-		   9,  29, 39, 9000,
-		   10, 30, 40, 10000,
-		   11, 31, 41, 11000,
-		   12, 32, 42, 12000,
-		   13, 33, 43, 13000,
-		   14, 34, 44, 14000,
-		   15, 35, 45, 15000,
-		   16, 36, 46, 16000,
-		   17, 37, 47, 17000,
-		   18, 38, 48, 18000,
-		   19, 39, 49, 19000,
-		   20, 30, 50, 20000      };
 
 /* USER CODE END 0 */
 
@@ -135,15 +113,32 @@ int main(void)
   HAL_TIMEx_PWMN_Start(&htim1, TIM_CHANNEL_3);
 
   extern volatile uint32_t CCRxValues1[24];
+  extern volatile uint32_t CCRxValues2[24];
 
   TIM1->CCR1 = CCRxValues1[0];
   TIM1->CCR2 = CCRxValues1[1];
   TIM1->CCR3 = CCRxValues1[2];
   TIM1->CCR4 = CCRxValues1[3];
 
-  TIM1->DIER |= TIM_DIER_UIE;
+  TIM1->DIER |= TIM_DIER_UIE | TIM_DMA_CC4;
 
-  HAL_TIM_DMABurst_MultiWriteStart(&htim1, TIM_DMABASE_CCR1, TIM_DMA_CC4, (uint32_t*)(&CCRxValues1[0]), TIM_DMABURSTLENGTH_4TRANSFERS, 24);
+  TIM1->DCR |= (TIM_DMABASE_CCR1 | TIM_DMABURSTLENGTH_4TRANSFERS);
+
+  HAL_DMAEx_MultiBufferStart(&hdma_tim1_ch4_trig_com, (uint32_t*)(&CCRxValues1[0]), &TIM1->DMAR, (uint32_t*)(&CCRxValues2[0]), 24);
+
+//  HAL_TIM_DMABurst_MultiWriteStart(&htim1, TIM_DMABASE_CCR1, TIM_DMA_CC4, (uint32_t*)(&CCRxValues1[0]), TIM_DMABURSTLENGTH_4TRANSFERS, 24);
+//
+//  //Disable dma
+//  hdma_tim1_ch4_trig_com.Instance->CR &= ~(1 << DMA_SxCR_EN);
+//
+//  hdma_tim1_ch4_trig_com.Instance->M1AR = (uint32_t)(uint32_t*)(&CCRxValues2[0]);
+//
+//  hdma_tim1_ch4_trig_com.Instance->CR |= DMA_SxCR_DBM;     /* Enable double buffer mode */
+//
+//  //Enable dma
+//  hdma_tim1_ch4_trig_com.Instance->CR |= (1 << DMA_SxCR_EN);
+
+  /* setup */
   HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_4);
 
   while (1)
@@ -158,13 +153,13 @@ int main(void)
 	}
 
   __HAL_DBGMCU_FREEZE_TIM2();
-  TIM1->CCR1 = CCRxValues[0];
-  TIM1->CCR2 = CCRxValues[1];
-  TIM1->CCR3 = CCRxValues[2];
-  TIM1->CCR4 = CCRxValues[3];
-
-  HAL_TIM_DMABurst_MultiWriteStart(&htim1, TIM_DMABASE_CCR1, TIM_DMA_CC4, &CCRxValues[4], TIM_DMABURSTLENGTH_4TRANSFERS, 80);
-  HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_4);
+//  TIM1->CCR1 = CCRxValues[0];
+//  TIM1->CCR2 = CCRxValues[1];
+//  TIM1->CCR3 = CCRxValues[2];
+//  TIM1->CCR4 = CCRxValues[3];
+//
+//  HAL_TIM_DMABurst_MultiWriteStart(&htim1, TIM_DMABASE_CCR1, TIM_DMA_CC4, &CCRxValues[4], TIM_DMABURSTLENGTH_4TRANSFERS, 80);
+//  HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_4);
   /* USER CODE END 2 */
 
   /* Infinite loop */
